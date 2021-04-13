@@ -1,6 +1,14 @@
-
+import Head from 'next/head'
 export default function Home() {
   return (
-    <div>Yamete kudasai</div>
+    <>
+      <Head>
+        <title>Home | ig.news</title>
+      </Head>
+      <h1>
+        Yamete kudasai
+      </h1>
+      
+    </>
   )
 }
