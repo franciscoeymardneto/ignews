@@ -1,4 +1,5 @@
 import { signIn, useSession } from "next-auth/client"
+import { api } from "../../services/api"
 import styles from "./styles.module.scss"
 interface SubscribeButtonProps {
     productId: string
@@ -10,12 +11,17 @@ interface SubscribeButtonProps {
 export function SubscribeButton({ productId } : SubscribeButtonProps) {
     const [ session ] = useSession()
 
-    function handleSubcribe(){
+    async function handleSubcribe(){
         if (!session) {
             signIn('github')
             return            
         }
-
+        try {
+            const response = await api.post('/subscribe')
+            const { sessionId } = response.data
+        } catch (error) {
+            
+        }
     }
     return (
         <button
