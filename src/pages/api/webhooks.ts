@@ -2,6 +2,7 @@ import { Stripe } from "stripe";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Readable } from 'stream'
 import { stripe } from "../../services/stripe";
+import { saveSubscription } from "./_lib/manageSubscription";
 
 async function buffer(readble: Readable) {
     const chunks = []
@@ -26,7 +27,9 @@ const relevantEvents = new Set([
 ])
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+    console.log("---------RECEBI-----------", req)
     if (req.method === 'POST'){
+        
         const buf = await buffer(req)
         const secret = req.headers['stripe-signature']
 
@@ -46,7 +49,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             try {
                 switch (type) {
                     case 'checkout.session.completed':
-                        
+                        const checkoutSession = event.data.object as Stripe.Checkout.Session
+                    
+                        await saveSubscription(
+                            checkoutSession.subscription.toString(),
+                            checkoutSession.customer.toString()
+                        )    
                         break;
                 
                     default:
